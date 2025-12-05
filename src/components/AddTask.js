@@ -1,27 +1,44 @@
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 
-const AddTask = ({onAddtask}) => {
+const AddTask = ({ onAddtask, editMode, editValue }) => {
   const [taskName, setTaskName] = useState("");
   const [toggle, setToggle] = useState(false);
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("work");
   const categoryOptions = ["work", "personal", "study", "other"];
 
-//   const [formData , setFormData] = useState({
-//     taskName:
-//   })
+  //   const [formData , setFormData] = useState({
+  //     taskName:
+  //   })
 
+  useEffect(() => {
+    if (editMode && editValue) {
+      setTaskName(editValue.taskName);
+      setToggle(editValue.status);
+      setCategory(editValue.selectedcategory);
+      
+    }
+  }, [editMode, editValue]);
+
+  const reset = () => {
+    setTaskName("");
+    setToggle(false);
+    setCategory("work");
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if(!taskName) return;
+
     const newTask = {
-      id: Date.now(),
+      id: editMode ? editValue.id : Date.now(),
       taskName: taskName,
       selectedcategory: category,
       status: toggle,
     };
 
     // console.log(newTask)
-    onAddtask(newTask)
+    onAddtask(newTask);
+    reset();
   };
   return (
     <form onSubmit={handleSubmit}>
